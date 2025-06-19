@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>✨ Jogo de Botões Online Estilo WhatsApp ✨</title>
+  <title>✨ Chat Online Estilo WhatsApp ✨</title>
   <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
   <style>
     :root {
@@ -26,93 +26,38 @@
 
     .container {
       width: 100%;
-      max-width: 430px;
+      max-width: 450px;
       height: 95vh;
-      border-radius: 20px;
       background: white;
+      border-radius: 20px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.2);
       display: flex;
       flex-direction: column;
       overflow: hidden;
     }
 
-    h1 {
+    header {
       background: var(--accent);
       color: white;
       padding: 10px;
       text-align: center;
-      margin: 0;
     }
 
-    .tema-selector, .top-info {
-      padding: 10px;
-      background: var(--bg-color);
-      display: flex;
-      gap: 5px;
-      align-items: center;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    input, button, select {
-      padding: 8px;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-      font-size: 14px;
-    }
-
-    button {
-      cursor: pointer;
-      background: var(--accent);
-      color: white;
-    }
-
-    .botao {
-      width: 60px;
-      height: 60px;
-      font-size: 20px;
-      color: white;
-      border-radius: 50%;
-      margin: 3px;
-      border: none;
-    }
-
-    .vermelho { background: #ff4d4d; }
-    .azul { background: #4d79ff; }
-    .verde { background: #4dff88; }
-
-    #status {
-      font-size: 14px;
-      color: var(--accent);
-      text-align: center;
-      padding: 5px;
-    }
-
-    #chatBox {
+    .chat {
       flex: 1;
       display: flex;
       flex-direction: column;
-      background: var(--bg-color);
-    }
-
-    #mensagens {
-      flex: 1;
+      padding: 10px;
       overflow-y: auto;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
+      background: var(--bg-color);
     }
 
     .msg {
-      padding: 6px 10px;
-      border-radius: 10px;
+      padding: 8px 12px;
+      border-radius: 18px;
       max-width: 70%;
       word-wrap: break-word;
-      display: flex;
-      align-items: center;
-      gap: 5px;
+      margin: 5px 0;
     }
 
     .msg.eu {
@@ -125,194 +70,185 @@
       align-self: flex-start;
     }
 
-    .avatar {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      object-fit: cover;
-    }
-
-    .chat-input {
+    .input-area {
       display: flex;
       gap: 5px;
-      padding: 5px;
+      padding: 10px;
       background: white;
     }
 
-    .chat-input input[type="file"] {
-      display: none;
+    input, button, select {
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 14px;
     }
 
-    .preview img {
-      max-width: 100%;
-      border-radius: 10px;
+    button {
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+    }
+
+    .botao {
+      width: 60px;
+      height: 60px;
+      font-size: 20px;
+      color: white;
+      border-radius: 50%;
+      border: none;
+    }
+
+    .vermelho { background: #ff4d4d; }
+    .azul { background: #4d79ff; }
+    .verde { background: #4dff88; }
+
+    footer {
+      background: white;
+      padding: 8px;
+      text-align: center;
+      border-top: 1px solid #ccc;
     }
   </style>
 </head>
 <body>
+
 <div class="container">
-<h1>💬 Chat Online</h1>
+  <header>
+    <h2>💬 Chat Online</h2>
+    <div>
+      <select onchange="mudarTema(this.value)">
+        <option value="classico">Clássico</option>
+        <option value="rosa">Rosa</option>
+        <option value="azul">Azul</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+  </header>
 
-<div class="tema-selector">
-  <label>Tema:</label>
-  <select onchange="mudarTema(this.value)">
-    <option value="classico">Clássico</option>
-    <option value="rosa">Rosa</option>
-    <option value="azul">Azul</option>
-    <option value="dark">Dark</option>
-  </select>
-</div>
+  <div class="chat" id="mensagens"></div>
 
-<div class="top-info">
-  <span>Seu ID: <span id="meuId"></span></span>
-  <button onclick="copiarID()">📋 Copiar ID</button>
-</div>
-<div class="top-info">
-  <input id="idOutro" placeholder="ID do outro jogador">
-  <button onclick="conectar()">Conectar</button>
-</div>
-
-<div class="top-info">
-  <button class="botao vermelho" onclick="clicarBotao('vermelho')">🔴</button>
-  <button class="botao azul" onclick="clicarBotao('azul')">🔵</button>
-  <button class="botao verde" onclick="clicarBotao('verde')">🟢</button>
-</div>
-
-<div id="status">Status: Aguardando conexão...</div>
-
-<div id="chatBox">
-  <div id="mensagens"></div>
-  <div class="chat-input">
+  <div class="input-area">
     <input id="mensagemInput" placeholder="Mensagem">
-    <button onclick="abrirEmojiPicker()">😀</button>
-    <label><input type="file" id="fileInput" onchange="enviarMidia()">📎</label>
-    <button onclick="enviarMensagem()">Enviar</button>
+    <button onclick="enviarMensagem()">📤</button>
     <button onclick="limparChat()">🧹</button>
   </div>
-</div>
+
+  <footer>
+    <span>Seu ID: <span id="meuId"></span></span>
+    <button onclick="copiarID()">📋</button>
+    <input id="idOutro" placeholder="ID do outro">
+    <button onclick="conectar()">Conectar</button>
+  </footer>
 </div>
 
 <script>
-const peer = new Peer();
-let conn = null;
+  const meuId = gerarIdPequeno();
+  const peer = new Peer(meuId, {
+    config: {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        {
+          urls: 'turn:openrelay.metered.ca:443',
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        }
+      ]
+    }
+  });
 
-peer.on('open', id => {
-  document.getElementById('meuId').innerText = id;
-});
+  peer.on('open', id => {
+    document.getElementById('meuId').innerText = id;
+  });
 
-peer.on('connection', connection => {
-  conn = connection;
-  configurarConexao(conn);
-});
+  let conn = null;
 
-function conectar() {
-  const outroId = document.getElementById('idOutro').value.trim();
-  if (!outroId) return alert('Insira o ID do outro jogador!');
-  conn = peer.connect(outroId);
-  configurarConexao(conn);
-}
-
-function configurarConexao(c) {
-  c.on('open', () => atualizarStatus('Conectado com ' + c.peer));
-  c.on('data', receber);
-  c.on('close', () => atualizarStatus('Conexão encerrada'));
-  c.on('error', err => atualizarStatus('Erro na conexão'));
-}
-
-function clicarBotao(cor) {
-  enviar({ tipo: 'botao', conteudo: cor });
-  atualizarStatus('Você clicou: ' + cor);
-}
-
-function enviarMensagem() {
-  const texto = document.getElementById('mensagemInput').value.trim();
-  if (!texto) return;
-  enviar({ tipo: 'mensagem', conteudo: texto });
-  adicionarMensagem(texto, 'eu');
-  document.getElementById('mensagemInput').value = '';
-}
-
-function enviarMidia() {
-  const file = document.getElementById('fileInput').files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const data = { tipo: 'midia', nome: file.name, conteudo: e.target.result };
-    enviar(data);
-    adicionarMensagem(`<a href="${e.target.result}" download="${file.name}">${file.name}</a>`, 'eu');
-  };
-  reader.readAsDataURL(file);
-}
-
-function abrirEmojiPicker() {
-  const input = document.getElementById('mensagemInput');
-  input.focus();
-  document.execCommand('insertText', false, '😀');
-}
-
-function enviar(data) {
-  if (conn && conn.open) conn.send(data);
-  else alert('Conecte primeiro!');
-}
-
-function receber(data) {
-  if (data.tipo === 'botao') atualizarStatus('O outro clicou: ' + data.conteudo);
-  if (data.tipo === 'mensagem') adicionarMensagem(data.conteudo, 'outro');
-  if (data.tipo === 'midia') {
-    adicionarMensagem(`<a href="${data.conteudo}" download="${data.nome}">${data.nome}</a>`, 'outro');
+  function gerarIdPequeno() {
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let id = '';
+    for (let i = 0; i < 6; i++) {
+      id += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return id;
   }
-}
 
-function adicionarMensagem(msg, tipo) {
-  const div = document.createElement('div');
-  div.className = 'msg ' + tipo;
-  div.innerHTML = `<img class="avatar" src="https://i.pravatar.cc/40">` + msg;
-  document.getElementById('mensagens').appendChild(div);
-  div.scrollIntoView();
-}
-
-function limparChat() {
-  document.getElementById('mensagens').innerHTML = '';
-}
-
-function copiarID() {
-  const id = document.getElementById('meuId').innerText;
-  navigator.clipboard.writeText(id);
-  alert('ID copiado!');
-}
-
-function atualizarStatus(txt) {
-  document.getElementById('status').innerText = txt;
-}
-
-function mudarTema(tema) {
-  const root = document.documentElement;
-  if (tema === 'classico') {
-    root.style.setProperty('--bg-color', '#e5ddd5');
-    root.style.setProperty('--msg-eu', '#dcf8c6');
-    root.style.setProperty('--msg-outro', '#fff');
-    root.style.setProperty('--accent', '#128c7e');
-    root.style.setProperty('--text-color', '#111');
-  } else if (tema === 'rosa') {
-    root.style.setProperty('--bg-color', '#ffe6f0');
-    root.style.setProperty('--msg-eu', '#ffcce5');
-    root.style.setProperty('--msg-outro', '#fff0f5');
-    root.style.setProperty('--accent', '#ff69b4');
-    root.style.setProperty('--text-color', '#111');
-  } else if (tema === 'azul') {
-    root.style.setProperty('--bg-color', '#d0e7ff');
-    root.style.setProperty('--msg-eu', '#add8e6');
-    root.style.setProperty('--msg-outro', '#f0f8ff');
-    root.style.setProperty('--accent', '#007acc');
-    root.style.setProperty('--text-color', '#111');
-  } else if (tema === 'dark') {
-    root.style.setProperty('--bg-color', '#1e1e1e');
-    root.style.setProperty('--msg-eu', '#333');
-    root.style.setProperty('--msg-outro', '#555');
-    root.style.setProperty('--accent', '#00ffc8');
-    root.style.setProperty('--text-color', '#f0f0f0');
+  function conectar() {
+    const outroId = document.getElementById('idOutro').value.trim();
+    conn = peer.connect(outroId);
+    configurarConexao(conn);
   }
-}
+
+  peer.on('connection', c => {
+    conn = c;
+    configurarConexao(conn);
+  });
+
+  function configurarConexao(c) {
+    c.on('open', () => adicionarMensagem('🔗 Conectado com ' + c.peer, 'outro'));
+    c.on('data', receber);
+    c.on('close', () => adicionarMensagem('❌ Conexão encerrada', 'outro'));
+  }
+
+  function enviarMensagem() {
+    const texto = document.getElementById('mensagemInput').value.trim();
+    if (texto === '') return;
+    conn.send({ tipo: 'mensagem', conteudo: texto });
+    adicionarMensagem(texto, 'eu');
+    document.getElementById('mensagemInput').value = '';
+  }
+
+  function receber(data) {
+    if (data.tipo === 'mensagem') adicionarMensagem(data.conteudo, 'outro');
+  }
+
+  function adicionarMensagem(msg, tipo) {
+    const div = document.createElement('div');
+    div.className = 'msg ' + tipo;
+    div.innerText = msg;
+    document.getElementById('mensagens').appendChild(div);
+    div.scrollIntoView();
+  }
+
+  function limparChat() {
+    document.getElementById('mensagens').innerHTML = '';
+  }
+
+  function copiarID() {
+    navigator.clipboard.writeText(document.getElementById('meuId').innerText);
+    alert('ID copiado!');
+  }
+
+  function mudarTema(tema) {
+    const root = document.documentElement;
+    if (tema === 'classico') {
+      root.style.setProperty('--bg-color', '#e5ddd5');
+      root.style.setProperty('--msg-eu', '#dcf8c6');
+      root.style.setProperty('--msg-outro', '#fff');
+      root.style.setProperty('--accent', '#128c7e');
+      root.style.setProperty('--text-color', '#111');
+    } else if (tema === 'rosa') {
+      root.style.setProperty('--bg-color', '#ffe6f0');
+      root.style.setProperty('--msg-eu', '#ffcce5');
+      root.style.setProperty('--msg-outro', '#fff0f5');
+      root.style.setProperty('--accent', '#ff69b4');
+      root.style.setProperty('--text-color', '#111');
+    } else if (tema === 'azul') {
+      root.style.setProperty('--bg-color', '#d0e7ff');
+      root.style.setProperty('--msg-eu', '#add8e6');
+      root.style.setProperty('--msg-outro', '#f0f8ff');
+      root.style.setProperty('--accent', '#007acc');
+      root.style.setProperty('--text-color', '#111');
+    } else if (tema === 'dark') {
+      root.style.setProperty('--bg-color', '#1e1e1e');
+      root.style.setProperty('--msg-eu', '#333');
+      root.style.setProperty('--msg-outro', '#555');
+      root.style.setProperty('--accent', '#00ffc8');
+      root.style.setProperty('--text-color', '#f0f0f0');
+    }
+  }
 </script>
+
 </body>
 </html>
